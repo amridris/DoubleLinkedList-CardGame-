@@ -26,6 +26,7 @@ public:
     void insert_before(unsigned position, unsigned data);
     void insert_after(unsigned position, unsigned data);
     void remove(unsigned position);
+    void display();
 
     doubly_linked_list split_before(unsigned position);
     doubly_linked_list split_after(unsigned position);
