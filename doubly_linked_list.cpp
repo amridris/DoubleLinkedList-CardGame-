@@ -141,15 +141,15 @@ doubly_linked_list::~doubly_linked_list() {
     //loop through the list using its size value
     while(i<=this->size)
     {
-        //move the earser pointer to the next node so to not lost the address
+        //move the temp pointer to the next node to avoid losing the address
         temp = temp->next;
-        //delete the node pointed by temp
+        //delete the node pointed by eraser
         delete eraser;
-        //move temp to the next
+        //move eraser to the next node to erase
         eraser = temp;
     }
-    //once all the list is deleted set head and tail to null
-    head = tail = nullptr;
+    //once all the list is deleted, delete head and tail pointers
+    delete head, tail, size;
 }
 
 // return the value inside of the node located at position
@@ -182,7 +182,7 @@ std::vector<unsigned> doubly_linked_list::get_set(unsigned position_from, unsign
         temp=temp->next;
     }
 
-    //check to see if the position_to is within the list
+    //check to see if the position_to is within the list range
 
     if(position_to < this->size)
     {
@@ -190,7 +190,7 @@ std::vector<unsigned> doubly_linked_list::get_set(unsigned position_from, unsign
         exit;
     }
 
-    //create a for loop insert values to the vector.
+    //create a for loop to insert the values to the vector.
     for(int i=0; i<=position_to; i++)
     {
         result.push_back(temp->data);
@@ -215,6 +215,8 @@ void doubly_linked_list::append(unsigned data) {
     temp->prev = tail;
     // move tail pointer to the new node since it is the last node
     tail=tail->next;
+    //update the size
+    this->size++;
 
 }
 
@@ -281,29 +283,129 @@ void doubly_linked_list::insert_before(unsigned position, unsigned data) {
     temp = newnode->prev;
     //point temp->next to the newnode
     temp->next = newnode;
+    //update the size
+    this->size++;
 
     return;
-    
+
 }
 
 // Insert a node after the node located at position
 void doubly_linked_list::insert_after(unsigned position, unsigned data) {
+    //create a temp node pointer
+    node *temp;
+    temp = head;
+    int i;
 
+    //move temp pointer to the desired location
+    while(i<= position)
+    {
+        temp = temp->next;
+    }
+
+    //once temp is at the desired location
+    //create new node with data value
+    node *newnode = new node(data);
+    //link the newnode to the node located at position & position+1.
+    newnode->next = temp->next;
+    newnode->prev = temp;
+    //fix the linkage of node located at position
+    temp->next = newnode;
+    //move temp forward to fix the linkage at position+1
+    temp = newnode->next;
+    //point temp->prev to the newnode
+    temp->prev = newnode;
+    //update the size
+    this->size++;
+
+    return;
 }
 
 // Remove the node located at position from the linked list
 void doubly_linked_list::remove(unsigned position) {
+    //we need to node pointers
+    node *temp, *temp1;
+    int i=0;
+    temp = temp1 = head;
+    //traverse to the location
+    while(i<=position)
+    {
+        temp = temp->next;
+    }
+    //move temp1 to the node after temp
+    temp1 = temp->next;
+    //link temp1->prev1 to temp->prev, to skip the node that will be deleted
+    temp1 = temp->prev;
+    //move temp1 to the node before temp to fix the linkage
+    temp1 = temp->prev;
+    //assign temp1->next to temp->next to skip the node that will be deleted
+    temp1->next = temp->next;
+    //now that the node pointed by temp has been completed disconnected from the list, we can delete it
+    delete temp;
+
+    //update the size
+    this->size--;
+
 
 }
 
 // Split the list with the node being split on being included in the returned list
 doubly_linked_list doubly_linked_list::split_before(unsigned position) {
-//    return ;
+    //save the split list under split_list
+    doubly_linked_list split_list;
+    int i=0;
+    //create a node
+    node* temp = head;
+    //travers to the location
+    while(i<=position)
+    {
+        temp = temp->next;
+    }
+    //split list head will be pointing at the position node.
+    split_list.head = temp;
+    //split list tail will be pointing to the tail of "this" list.
+    split_list.tail = this->tail;
+    //move this->tail to the node before temp
+    this->tail = temp->prev;
+    //break the split, by assigning this->tail->next to null.
+    this->tail->next = nullptr;
+    //and by assigning split_list.head->prev to null
+    split_list.head->prev = nullptr;
+    //update the sizes
+    this->size = size - position-1;
+    split_list.size = split_list.size - position+1;
+    //return the new split_list
+    return split_list;
+
 }
 
 // Split the list with the node being split on being included in the retained list
 doubly_linked_list doubly_linked_list::split_after(unsigned position) {
-//    return ;
+    //save the split list under split_list
+    doubly_linked_list split_list;
+    int i=0;
+    //create a node
+    node* temp = head;
+    //travers to the location
+    while(i<=position)
+    {
+        temp = temp->next;
+    }
+    //split list head will be pointing at the position node.
+    split_list.head = temp->next;
+    //split list tail will be pointing to the tail of "this" list.
+    split_list.tail = this->tail;
+    //move this->tail to the node before temp
+    this->tail = temp;
+    //break the split, by assigning this->tail->next to null.
+    this->tail->next = nullptr;
+    //and by assigning split_list.head->prev to null
+    split_list.head->prev = nullptr;
+    //update the sizes
+    this->size = size - position+1;
+    split_list.size = split_list.size - position-1;
+    //return the new split_list
+    return split_list;
 }
 
 // Create two lists, one starting at position_from and ending with position_to and return that list
