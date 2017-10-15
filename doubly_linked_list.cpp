@@ -262,7 +262,7 @@ doubly_linked_list doubly_linked_list::operator+(const doubly_linked_list &rhs) 
     this->tail->next = rhs.head;
     rhs.head->prev = this->tail;
     //delete all the heads and tails of the first and 2nd lists.
-    delete this->tail, this->head, rhs.head, rhs.tail;
+    //delete this->tail, this->head, rhs.head, rhs.tail;
     //return the newly created list
     return s;
 }
@@ -562,17 +562,18 @@ doubly_linked_list &doubly_linked_list::operator=(const doubly_linked_list &RHS)
 
     this->size = RHS.size;
     node* temp_RHS, *temp_this;
-    temp_this = new node(temp_RHS->data);
-    this->head = this->tail = temp_this;
-    int i=1;
-    while(i<RHS.size)
+    temp_RHS = RHS.head;
+    temp_this = new node(0);
+    this->head=this->tail=temp_this;
+
+    while(temp_RHS!= nullptr)
     {
-        temp_RHS = temp_RHS->next;
-        temp_this->next = new node(temp_RHS->data);
+        temp_this->data = temp_RHS->data;
+        temp_this->next = new node(0);
         temp_this = temp_this->next;
         temp_this->prev = this->tail;
+        temp_RHS = temp_RHS->next;
         this->tail = this->tail->next;
-        i++;
     }
 
     return *this;

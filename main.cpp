@@ -8,6 +8,7 @@ int main() {
 
     doubly_linked_list s;
     doubly_linked_list d;
+    doubly_linked_list m;
     d.append(1);
     d.append(2);
     d.append(9);
@@ -19,11 +20,8 @@ int main() {
     s.append(46);
     s.append(2544);
     s.append(124);
-    cout<<"The size of the list is: "<<s.get_size()<<endl;
 
-    s.merge(d);
-    s.insert_after(4,6111989);
-    s.display();
-
-
+    m = s+d;
+    m.display();
+    return 0;
 }
