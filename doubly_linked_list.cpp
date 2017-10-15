@@ -113,20 +113,18 @@ doubly_linked_list::doubly_linked_list(const doubly_linked_list& original) {
         //no need to update the size value because it matches the original list size
     }
 
-    return;
 
 }
 
 // Create doubly linked linked list with one input value
 doubly_linked_list::doubly_linked_list(unsigned input) {
     //create a temp node pointer and point it to a new created node with value input
-    node *temp = new node(input);
+    auto *temp = new node (input);
     //have the head & tail list point to the new node
     this->head = this->tail = temp;
     //since we are adding one node, size = 1
     this->size++;
 
-    return;
 
 }
 
@@ -140,7 +138,7 @@ doubly_linked_list::~doubly_linked_list() {
     //set the two pointers to head
     temp = eraser = this->head;
     //loop through the list using its size value
-    while(i<this->size)
+    while(temp)
     {
         //move the temp pointer to the next node to avoid losing the address
         temp = temp->next;
@@ -148,8 +146,6 @@ doubly_linked_list::~doubly_linked_list() {
         delete eraser;
         //move eraser to the next node to erase
         eraser = temp;
-
-        i++;
     }
 
 }
@@ -195,7 +191,7 @@ std::vector<unsigned> doubly_linked_list::get_set(unsigned position_from, unsign
     }
 
     //create a for loop to insert the values to the vector.
-    for(int i=0; i<=position_to; i++)
+    for(i=0; i<=position_to; i++)
     {
         result.push_back(temp->data);
         temp = temp->next;
@@ -243,8 +239,6 @@ void doubly_linked_list::merge(doubly_linked_list rhs) {
     // let this->tail point to the same node as rhs.tail is pointing to
     this->tail = rhs.tail;
 
-    return;
-
 }
 
 // Allow for the merging of two lists using the + operator.
@@ -252,17 +246,35 @@ doubly_linked_list doubly_linked_list::operator+(const doubly_linked_list &rhs) 
 
     //create a new list to store the values of two lists
     doubly_linked_list s;
-    //the new list size = size of list 1 + size of list 2
     s.size = this->size + rhs.size;
-    //let the new list point to the first node of the first list, by assigning s.head = this-> head
-    s.head = this->head;
-    //let the new list point to the end node of the 2nd list by assigning s.tail = rhs->tail
-    s.tail = rhs.tail;
-    // link the end node of the first list to the first node of the 2nd list
-    this->tail->next = rhs.head;
-    rhs.head->prev = this->tail;
-    //delete all the heads and tails of the first and 2nd lists.
-    //delete this->tail, this->head, rhs.head, rhs.tail;
+    node *temp, *temp1, *temp2;
+    temp1 = this->head;
+    temp2 = rhs.head;
+    temp = new node(0);
+    s.head = s.tail = temp;
+
+    while(temp1!= nullptr)
+    {
+         temp->data = temp1->data;
+         temp->next = new node(0);
+         temp = temp->next;
+        temp->prev = s.tail;
+        s.tail = s.tail->next;
+        temp1 = temp1->next;
+    }
+
+    while(temp2!= nullptr)
+    {
+        temp->data = temp2->data;
+        temp->next = new node(0);
+        temp = temp->next;
+        temp->prev = s.tail;
+        s.tail = s.tail->next;
+        temp2 = temp2->next;
+    }
+
+
+
     //return the newly created list
     return s;
 }
@@ -272,8 +284,13 @@ void doubly_linked_list::insert_before(unsigned position, unsigned data) {
     //create a temp node pointer
     node *temp;
     temp = head;
-    int i;
+    int i=1;
 
+    if(position > this->size || position <= 0)
+    {
+        cout<<"Error encountered!. The position is out of range, please enter a different value."<<endl;
+        exit(0);
+    }
     //move temp pointer to the desired location
     while(i<position)
     {
@@ -283,7 +300,7 @@ void doubly_linked_list::insert_before(unsigned position, unsigned data) {
 
     //once temp is at the desired location
     //create new node with data value
-    node *newnode = new node(data);
+    auto *newnode = new node(data);
     //link the newnode to the node located at position & position-1.
     newnode->next = temp;
     newnode->prev = temp->prev;
@@ -296,40 +313,50 @@ void doubly_linked_list::insert_before(unsigned position, unsigned data) {
     //update the size
     this->size++;
 
-    return;
 
 }
 
 // Insert a node after the node located at position
 void doubly_linked_list::insert_after(unsigned position, unsigned data) {
     //create a temp node pointer
-    node *temp;
+    node *temp, *temp1;
     temp = head;
-    int i;
+    int i=1;
 
+    if(position >= this->size || position < 0)
+    {
+        cout<<"Error encountered!. The position is out of range, please enter a different value."<<endl;
+        exit(0);
+    }
     //move temp pointer to the desired location
-    while(i<position)
+    while(i<=position)
     {
         temp = temp->next;
         i++;
     }
 
-    //once temp is at the desired location
-    //create new node with data value
-    node *newnode = new node(data);
-    //link the newnode to the node located at position & position+1.
-    newnode->next = temp->next;
-    newnode->prev = temp;
-    //fix the linkage of node located at position
-    temp->next = newnode;
-    //move temp forward to fix the linkage at position+1
-    temp = newnode->next;
-    //point temp->prev to the newnode
-    temp->prev = newnode;
-    //update the size
-    this->size++;
+    if(temp->next == nullptr)
+    {
+        auto *newnode = new node(0);
+        newnode->prev = temp;
+        temp->next = newnode;
+        this->size++;
+    }
+    else {
 
-    return;
+        temp1 = temp->next;
+        //once temp is at the desired location
+        //create new node with data value
+        auto *newnode = new node(data);
+        //link the newnode to the node located at position & position+1.
+        newnode->next = temp1;
+        temp1->prev = newnode;
+        newnode->prev = temp;
+        temp->next = newnode;
+
+        //update the size
+        this->size++;
+    }
 }
 
 // Remove the node located at position from the linked list
@@ -440,7 +467,7 @@ doubly_linked_list doubly_linked_list::split_set(unsigned position_from, unsigne
     }
 
     //create a node to insert values to list1
-    node *insertion = new node(temp->data);
+    auto *insertion = new node(temp->data);
     list1.size++;
     list1.head = list1.tail = insertion;
 
@@ -502,7 +529,6 @@ void doubly_linked_list::swap(unsigned position1, unsigned position2) {
     temp2->next = swap_1_2;
     temp2->next = swap_1_1;
 
-    return;
 }
 
 // Swap two sets of cards. The sets are inclusive. USE POINTERS!
@@ -611,5 +637,4 @@ void doubly_linked_list::display()
         i++;
     }
 
-    return;
 }

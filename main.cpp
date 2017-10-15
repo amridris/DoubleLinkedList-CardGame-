@@ -10,16 +10,14 @@ int main() {
     doubly_linked_list d;
     doubly_linked_list m;
     d.append(1);
-    d.append(2);
-    d.append(9);
-    d.append(47);
-    d.append(1000);
+    d.append(80);
+    d.append(32);
+    d.append(2321);
+    s.append(322);
+    s.append(6698);
     s.append(4);
-    s.append(6);
-    s.append(25);
-    s.append(46);
-    s.append(2544);
-    s.append(124);
+
+    s.insert_before(3,778);
 
     m = s+d;
     m.display();
