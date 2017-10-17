@@ -250,23 +250,23 @@ doubly_linked_list doubly_linked_list::operator+(const doubly_linked_list &rhs) 
     node *temp, *temp1, *temp2;
     temp1 = this->head;
     temp2 = rhs.head;
-    temp = new node(0);
+    temp = new node (temp1->data);
     s.head = s.tail = temp;
+    temp1 = temp1->next;
 
     while(temp1!= nullptr)
     {
-         temp->data = temp1->data;
-         temp->next = new node(0);
+        temp->next  = new node(temp1->data);
          temp = temp->next;
         temp->prev = s.tail;
         s.tail = s.tail->next;
         temp1 = temp1->next;
     }
 
+
     while(temp2!= nullptr)
     {
-        temp->data = temp2->data;
-        temp->next = new node(0);
+        temp->next = new node(temp2->data);
         temp = temp->next;
         temp->prev = s.tail;
         s.tail = s.tail->next;
@@ -453,48 +453,82 @@ doubly_linked_list doubly_linked_list::split_after(unsigned position) {
 // Merge the beginning of the original list with the end of the original list and retain it
 doubly_linked_list doubly_linked_list::split_set(unsigned position_from, unsigned position_to) {
 
-    //created a new lists
-    doubly_linked_list list1;
+    doubly_linked_list split_list;
+    if(position_from !=0 && position_to != size) {
+        node *temp1, *temp2, *temp3, *temp4;
+        temp1 = temp2 = temp3 = temp4 = this->head;
 
-    //list 1 will have values from the original list from position_from to position_to.
-    node* temp=this->head;
-    //traverse to position_from
-    int i=0;
-    while(i<position_from)
-    {
-        temp = temp->next;
-        i++;
+        int i = 0, x = 0, y = 0, z = 0;
+        while (i < position_from) {
+            temp1 = temp1->next;
+            i++;
+        }
+        while (y < position_to) {
+            temp4 = temp4->next;
+        }
+
+        while (x <= position_from) {
+            temp2 = temp2->next;
+        }
+
+        while (z <= position_to) {
+            temp3 = temp3->next;
+        }
+        temp1->next = temp4;
+        temp4->prev = temp1;
+
+        temp2 = temp2->prev = nullptr;
+        temp3 = temp3->next = nullptr;
+
+        split_list.head = temp2;
+        split_list.tail = temp3;
+
+
     }
 
-    //create a node to insert values to list1
-    auto *insertion = new node(temp->data);
-    list1.size++;
-    list1.head = list1.tail = insertion;
-
-    //we will traverse temp pointer to position_to, while inserting values to list1
-    int y=0;
-
-    while(y<position_to)
+    else if(position_from == 0 && position_to != size)
     {
-        //move temp to the next node
-        temp = temp->next;
-        //copy the data of temp node to the new node
-        insertion->next = new node(temp->data);
-        //move insertion to the next node
-        insertion = insertion->next;
-        //backward link the insertion node to the node before it
-        insertion->prev = list1.tail;
-        // move the tail to the next node
-        list1.tail = insertion;
-        //update size with each node
-        list1.size++;
-        y++;
+        node *temp,*temp1;
+        temp = this->head;
+        int i=0;
+        while(i<=position_to)
+        {
+            temp1 = temp1->next;
+            i++;
+        }
+        split_list.head = temp;
+        this->head = temp1->next;
+        split_list.tail = temp1;
+        temp1->next = nullptr;
+        this->head->prev = nullptr;
+
+
+
     }
 
-    //////////////////// merge head and tail of the original list and retain it//////////////////////////////////
-    this->head->prev = this->tail->next;
+    else
+    {
+        node *temp,*temp1;
+        temp = this->head;
+        int i=0;
+        while(i<=position_from)
+        {
+            temp1 = temp1->next;
+            i++;
+        }
+        temp = this->tail;
+        this->tail = temp1->prev;
+        split_list.head = temp;
+        split_list.tail = temp1;
+        temp->prev = nullptr;
+        this->tail->next = nullptr;
 
-    return list1;
+
+    }
+
+    return split_list;
+
+
 }
 
 // Swap two nodes in the list. USE POINTERS. Do not just swap the values!
@@ -630,7 +664,7 @@ void doubly_linked_list::display()
     node *temp;
     temp = this->head;
     int i=0;
-    while(i<this->size)
+    while(temp!= nullptr)
     {
         cout<<temp->data<<endl;
         temp = temp->next;
