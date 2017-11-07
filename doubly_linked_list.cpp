@@ -456,33 +456,36 @@ doubly_linked_list doubly_linked_list::split_set(unsigned position_from, unsigne
     doubly_linked_list split_list;
     if(position_from !=0 && position_to != size) {
         node *temp1, *temp2, *temp3, *temp4;
-        temp1 = temp2 = temp3 = temp4 = this->head;
+        temp1 = temp2 = this->head;
 
-        int i = 0, x = 0, y = 0, z = 0;
+        int i = 0, y = 0;
+
         while (i < position_from) {
             temp1 = temp1->next;
             i++;
         }
         while (y < position_to) {
-            temp4 = temp4->next;
-        }
-
-        while (x <= position_from) {
             temp2 = temp2->next;
+            y++;
         }
 
-        while (z <= position_to) {
-            temp3 = temp3->next;
-        }
-        temp1->next = temp4;
-        temp4->prev = temp1;
+        temp3 = temp1->prev;
+        temp4 = temp2->next;
 
-        temp2 = temp2->prev = nullptr;
-        temp3 = temp3->next = nullptr;
+        temp4->prev = nullptr;
+        temp2->next = nullptr;
 
-        split_list.head = temp2;
-        split_list.tail = temp3;
 
+        temp3->next = nullptr;
+        temp1->prev = nullptr;
+
+        split_list.head = temp1;
+        split_list.tail = temp2;
+
+        this->head->prev = tail;
+        this->tail->next = head;
+        this->head = temp4;
+        this->tail = temp3;
 
     }
 
@@ -663,12 +666,10 @@ void doubly_linked_list::display()
 {
     node *temp;
     temp = this->head;
-    int i=0;
     while(temp!= nullptr)
     {
         cout<<temp->data<<endl;
         temp = temp->next;
-        i++;
     }
 
 }
