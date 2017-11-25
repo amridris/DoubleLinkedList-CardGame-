@@ -43,44 +43,28 @@ doubly_linked_list::doubly_linked_list() {
 }
 
 // Take in a vector of inputs and construct a doubly linked list from them
-doubly_linked_list::doubly_linked_list(std::vector<unsigned> values) {
+doubly_linked_list::doubly_linked_list(std::vector<unsigned> &values) {
 
-    if(this->head == nullptr && tail->prev == nullptr)//List is empty
-    {
-        head = tail = new node(values[0]); //created an empty node
-        this->size = 1; //since we created a single node
-        node* temp = head; // create a node pointer
+    //Since this is a constructor we assume the list is always empty1
+    this->head = this->tail = 0;
+    this->size = 0;
+    unsigned int i;
+    node *temp;
 
-        for(int i=1; i<=values.size();i++)//loop through to insert all of the vector values
-        {
-          temp->next = new node(values[i]); //create a new node and link the two nodes together (only next linkage
-          this->size++; //increase size value with every node created
-          temp = temp->next; //move temp to the new node
-          temp->prev = tail; // link the nodes together (both ways)
-          tail = tail->next;  //move tail such that at the end the tail is pointing to the last node
-        }
+    //creating the first node for value[0]
+    this->head = this->tail = temp = new node(values[0]);
+    size++;
 
-
-        return; //return
+    //creating the rest of the list
+    for (i = 1; i < values.size(); i++) {
+        this->tail = new node(values[i]);
+        this->tail->prev = temp;
+        temp->next = tail;
+        temp = temp->next;
+        size++;
     }
 
-    else // list is not empty, we will continue adding values to the list
-    {
-        node* temp = tail; //create a new node and have it point to the node tail pointer is pointing to, that way we are adding values at the end
-
-        for(int i=0; i<=values.size();i++)
-        {
-            temp->next = new node(values[i]);
-            this->size++;//update the size value with each added nodes.
-            temp = temp->next;
-            temp->prev = tail;
-            tail = tail->next;
-        }
-
-
-
-        return;
-    }
+    return;
 }
 
 // Copy constructor
@@ -150,31 +134,43 @@ doubly_linked_list::~doubly_linked_list() {
 
 }
 
-// return the value inside of the node located at position
+// return the value inside of the list located at position
 unsigned doubly_linked_list::get_data(unsigned position) {
-    int i=0;
+    int i=1;
     //create a node temp to locate the position and return the value
     node* temp;
     //set temp to point to the first node
     temp = head;
 
-    while(i<position)
+    //Check to see if the value is within range
+    if(position > this->size)
     {
-        //move temp to the location
-        temp = temp->next;
-        i++;
+        cerr<<"Error! Value specified is out range"<<endl;
+        exit(1);
     }
 
+    else {
+        while (i < position) {
+            //move temp to the location
+            temp = temp->next;
+            i++;
+        }
+    }
     return temp->data;
 }
 
 // Get a set of values between position_from to position_to
 std::vector<unsigned> doubly_linked_list::get_set(unsigned position_from, unsigned position_to) {
-    int i=0;
+
+    //FYI, starting from 1 2 3 4 5 6 and not 0 1 2 3 4 5...
+    int i=1;
+
     //create a vector to save the values
     std::vector<unsigned>result;
+
     //create a temp node and point it to the first node
     node *temp = head;
+
     //move temp to the position_from(starting point)
     while(i<position_from)
     {
@@ -183,22 +179,21 @@ std::vector<unsigned> doubly_linked_list::get_set(unsigned position_from, unsign
     }
 
     //check to see if the position_to is within the list range
-
-    if(position_to < this->size)
+    if(position_to > this->size)
     {
         std::cout<<"Error encountered! location specified is out of range."<<std::endl;
-        exit;
+        exit(1);
     }
 
-    //create a for loop to insert the values to the vector.
-    for(i=0; i<=position_to; i++)
-    {
-        result.push_back(temp->data);
-        temp = temp->next;
+    else { //create a for loop to insert the values to the vector.
+        unsigned int y=0;
+        for (y=position_from; y <= position_to; y++) {
+            result.push_back(temp->data);
+            temp = temp->next;
+        }
     }
 
     return result;
-
 }
 
 // Add a value to the end of the list
@@ -229,7 +224,7 @@ void doubly_linked_list::append(unsigned data) {
 }
 
 // Merge two lists together in place, placing the input list at the end of this list
-void doubly_linked_list::merge(doubly_linked_list rhs) {
+const doubly_linked_list doubly_linked_list::merge(doubly_linked_list rhs) {
     //add the two sizes to get the size of the merged list
     this->size += rhs.size;
     //assign the this->tail->next field to point to rhs.head address to forward link the last end of this list to the rhs list
