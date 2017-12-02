@@ -3,29 +3,43 @@
 #include "node.h"
 #include "deck.h"
 using namespace std;
+void fillVector(vector<unsigned>& vector)
+{
+    cout<<"Please type in your number"<<endl;
+    unsigned input;
+    cin>>input;
 
+    while(input != -1)
+    {
+        vector.push_back(input);
+        cin>>input;
+    }
+}
+
+void printVector(const vector<unsigned>& vector)
+{
+    unsigned int i;
+    for(i=0; i<vector.size(); i++)
+    {
+        cout<<vector[i]<<" ";
+    }
+    cout<<endl;
+}
 int main() {
 
-    doubly_linked_list s;
-    doubly_linked_list d;
-    doubly_linked_list m;
-    doubly_linked_list split;
-    s.append(4);
-    s.append(5);
-    s.append(6);
-    s.append(7);
-    s.append(8);
-    s.append(9);
-    s.append(10);
-    s.append(11);
-    s.append(12);
-    s.append(13);
-    s.append(14);
-    s.append(15);
-    s.append(16);
-    s.append(17);
-    s.append(18);
-    s.split_set(2,10);
-    s.display();
+    vector<unsigned> v;
+    vector<unsigned> S;
+    fillVector(v);
+    printVector(v);
+    doubly_linked_list listV(v);
+    doubly_linked_list list2;
+    list2.append(1);
+    list2.append(2);
+    list2.append(3);
+    list2.append(4);
+    list2.append(5);
+    list2.append(6);
+    list2.merge(listV);
+    list2.display();
     return 0;
 }

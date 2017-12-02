@@ -70,7 +70,8 @@ doubly_linked_list::doubly_linked_list(std::vector<unsigned> &values) {
 // Copy constructor
 doubly_linked_list::doubly_linked_list(const doubly_linked_list& original) {
     //Use a temp pointer to transfer the values to the new list
-    node* temp_ori = original.head;
+    node *temp_ori = original.head;
+
 
     //creating an empty starting node for the new list with the new list head and tail pointers pointing to it
     this->head = new node(temp_ori->data);
@@ -79,11 +80,10 @@ doubly_linked_list::doubly_linked_list(const doubly_linked_list& original) {
     //since we are copying the list, the size of the new list is gone be equal to the size of the original list
     this->size = original.size;
     //create temp_new pointer to help us copy the values
-    node* temp_new = this->head;
-    temp_ori= temp_ori->next;
+    node *temp_new = this->head;
+    temp_ori = temp_ori->next;
 
-    for(int i=1; i<original.size;i++)
-    {
+    for (int i = 1; i < original.size; i++) {
         //using temp_new & this->tail, we will copy the values
         temp_new->next = new node(temp_ori->data);
         //move temp_ori to the next node to copy it
@@ -97,8 +97,8 @@ doubly_linked_list::doubly_linked_list(const doubly_linked_list& original) {
         //no need to update the size value because it matches the original list size
     }
 
-
 }
+
 
 // Create doubly linked linked list with one input value
 doubly_linked_list::doubly_linked_list(unsigned input) {
@@ -122,7 +122,7 @@ doubly_linked_list::~doubly_linked_list() {
     //set the two pointers to head
     temp = eraser = this->head;
     //loop through the list using its size value
-    while(temp)
+    while(temp != nullptr)
     {
         //move the temp pointer to the next node to avoid losing the address
         temp = temp->next;
@@ -225,6 +225,9 @@ void doubly_linked_list::append(unsigned data) {
 
 // Merge two lists together in place, placing the input list at the end of this list
 const doubly_linked_list doubly_linked_list::merge(doubly_linked_list rhs) {
+
+    *this += rhs;
+    /*
     //add the two sizes to get the size of the merged list
     this->size += rhs.size;
     //assign the this->tail->next field to point to rhs.head address to forward link the last end of this list to the rhs list
@@ -233,6 +236,8 @@ const doubly_linked_list doubly_linked_list::merge(doubly_linked_list rhs) {
     rhs.head->prev = this->tail;
     // let this->tail point to the same node as rhs.tail is pointing to
     this->tail = rhs.tail;
+    */
+    return *this;
 
 }
 
@@ -619,33 +624,41 @@ void doubly_linked_list::swap_set(unsigned position1_from, unsigned position1_to
 doubly_linked_list &doubly_linked_list::operator=(const doubly_linked_list &RHS) {
 
     this->size = RHS.size;
-    node* temp_RHS, *temp_this;
+    node* temp_RHS, *temp_this, *temp_this_prev;
     temp_RHS = RHS.head;
-    temp_this = new node(0);
-    this->head=this->tail=temp_this;
+    this->head=this->tail= temp_this_prev = temp_this;
+    temp_this->data = temp_RHS->data;
 
-    while(temp_RHS!= nullptr)
+    while(temp_RHS->next!= nullptr)
     {
-        temp_this->data = temp_RHS->data;
-        temp_this->next = new node(0);
-        temp_this = temp_this->next;
-        temp_this->prev = this->tail;
         temp_RHS = temp_RHS->next;
-        this->tail = this->tail->next;
+        temp_this->next = new node(temp_RHS->data);
+        temp_this = temp_this->next;
+        temp_this->prev = temp_this_prev;
+        temp_this_prev = temp_this_prev->next;
+
     }
 
     return *this;
 }
 
-// Append the rhs to the end of the this list
+// Append the rhs to the end of this list
 doubly_linked_list &doubly_linked_list::operator+=(const doubly_linked_list &RHS) {
 
-    this->size += RHS.size;
-    this->tail->next = RHS.head;
-    RHS.head->prev = this->tail;
-    this->tail = RHS.tail;
-    RHS.head->next = RHS.head->prev = RHS.tail->next = RHS.tail->prev = nullptr;
+    if(this->head == nullptr && this->tail == nullptr)
+    {
+        *this = RHS;
+    }
 
+    else {
+
+
+        this->size += RHS.size;
+        this->tail->next = RHS.head;
+        RHS.head->prev = this->tail;
+        this->tail = RHS.tail;
+        RHS.head->next = RHS.head->prev = RHS.tail->next = RHS.tail->prev = nullptr;
+    }
     return *this;
 }
 

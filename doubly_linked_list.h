@@ -12,7 +12,7 @@ class doubly_linked_list {
 public:
     doubly_linked_list();
     doubly_linked_list(unsigned input);
-    doubly_linked_list(std::vector <unsigned> values );
+    doubly_linked_list(std::vector <unsigned> &values );
     doubly_linked_list(const doubly_linked_list& original);
     ~doubly_linked_list();
 
@@ -22,7 +22,7 @@ public:
     bool is_empty();
 
     void append(unsigned data);
-    void merge(doubly_linked_list rhs);
+    const doubly_linked_list merge(doubly_linked_list rhs);
     void insert_before(unsigned position, unsigned data);
     void insert_after(unsigned position, unsigned data);
     void remove(unsigned position);
